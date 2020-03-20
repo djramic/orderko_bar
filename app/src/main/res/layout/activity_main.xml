@@ -35,17 +35,19 @@
                 app:cardElevation="6dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" >
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/bar_table_number_txtv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textSize="30dp"
-                    android:text="TextView" />
+                    android:gravity="center"
+                    android:text="TextView"
+                    android:textSize="50dp" />
             </androidx.cardview.widget.CardView>
 
             <ListView
+                android:clickable="false"
                 android:id="@+id/list_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

@@ -4,18 +4,28 @@ public class Order {
     private String id;
     private String name;
     private String quantity;
+    private String category;
     private String bulk;
     private String table;
 
     public Order() {
     }
 
-    public Order(String name, String quantity, String bulk, String table, String id) {
+    public Order(String name, String quantity, String bulk, String table, String id, String category) {
         this.name = name;
         this.quantity = quantity;
         this.bulk = bulk;
         this.table = table;
         this.id = id;
+        this.category = category;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setTable(String table) {
