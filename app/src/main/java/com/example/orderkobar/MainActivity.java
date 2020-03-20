@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 order_list.clear();
-                orders.clear();
                 myDb.clearTable();
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
@@ -64,48 +63,23 @@ public class MainActivity extends AppCompatActivity {
                 for(DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
                     Order order_recive = orderSnapshot.getValue(Order.class);
 
-
-                    orders.add(order_recive);
                     myDb.insertData(order_recive.getName(),order_recive.getCategory(),order_recive.getBulk(),order_recive.getQuantity(),order_recive.getTable(),
                                     order_recive.getId());
-
+                    orders.add(order_recive);
                 }
 
-                ArrayList<String> unique_orders = new ArrayList<>();
+                ArrayList<String> unique_table = new ArrayList<>();
                 for(Order o : orders) {
-                    if(!unique_orders.contains(o.getName())) {
-                        unique_orders.add(o.getName());
+                    if(!unique_table.contains(o.getTable())) {
+                        unique_table.add(o.getTable());
                     }
                 }
 
-                for(String order_name : unique_orders) {
-                    Cursor res = myDb.getDrinksOfName(order_name);
-                    int quantity = 0;
-                    while (res.moveToNext()){
-                        quantity =quantity + Integer.parseInt(res.getString(4));
-
-                        }
-                    //Log.d("unique","Za pice: " + order_name + "imamo narudzbina " + quantity);
-                    String order = quantity + " x " + order_name;
-                    order_list.add(order);
+                for(String ut : unique_table){
+                    List<String> order_for_table = new ArrayList<String>();
+                    order_for_table = orderForTable(ut);
 
                 }
-
-
-                StringBuffer buffer = new StringBuffer();
-                /*Cursor res = myDb.getAllData();
-                while (res.moveToNext()) {
-                    buffer.append("ID :" + res.getString(0) + "\n");
-                    buffer.append("Drink_id :" + res.getString(6) + "\n");
-                    buffer.append("Drink :" + res.getString(1) + "\n");
-                    buffer.append("Category :" + res.getString(2) + "\n");
-                    buffer.append("Bulk :" + res.getString(3) + "\n");
-                    buffer.append("Quantity :" + res.getString(4) + "\n");
-                    buffer.append("Table :" + res.getString(5) + "\n\n");
-                }
-                Log.d("databasetest" , buffer.toString());*/
-
-                listView.setAdapter(arrayAdapter);
             }
 
             @Override
@@ -120,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         main_card_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("databasetest", "Brisem vrednost");
+
                 Cursor res = myDb.getAllData();
                 while (res.moveToNext()) {
                     Log.d("databasetest", "Pokupio sam id: " + res.getString(6));
@@ -129,8 +103,57 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private List<String>  orderForTable(String table ) {
+
+        ArrayList<Order> table_orders = new ArrayList<>();
+        order_list.clear();
+
+        Cursor res = myDb.getDrinksOfTable(table);
+        Log.d("tabletest","Usao sam ovde gledam sto " + table);
+        while(res.moveToNext()) {
+            Order order = new Order(res.getString(1),res.getString(4),res.getString(3),
+                    res.getString(5),res.getString(6),res.getString(2));
+                    Log.d("tabletest","Ovo je poruzbina za sto 1 " + order.toString());
+                    table_orders.add(order);
+
+        }
+
+        ArrayList<String> unique_orders = new ArrayList<>();
+        for(Order o : table_orders) {
+            if(!unique_orders.contains(o.getName())) {
+                unique_orders.add(o.getName());
+            }
+        }
+
+        for(String order_name : unique_orders) {
+            Cursor ord = myDb.getDrinksOfName(order_name);
+            int quantity = 0;
+            while (ord.moveToNext()){
+                quantity =quantity + Integer.parseInt(ord.getString(4));
+
+            }
+            //Log.d("unique","Za pice: " + order_name + "imamo narudzbina " + quantity);
+            String order = quantity + " x " + order_name;
+            order_list.add(order);
+
+        }
 
 
-
+        StringBuffer buffer = new StringBuffer();
+                /*Cursor res = myDb.getAllData();
+                while (res.moveToNext()) {
+                    buffer.append("ID :" + res.getString(0) + "\n");
+                    buffer.append("Drink_id :" + res.getString(6) + "\n");
+                    buffer.append("Drink :" + res.getString(1) + "\n");
+                    buffer.append("Category :" + res.getString(2) + "\n");
+                    buffer.append("Bulk :" + res.getString(3) + "\n");
+                    buffer.append("Quantity :" + res.getString(4) + "\n");
+                    buffer.append("Table :" + res.getString(5) + "\n\n");
+                }
+                Log.d("databasetest" , buffer.toString());*/
+        return order_list;
+        //listView.setAdapter(arrayAdapter);
     }
 }
