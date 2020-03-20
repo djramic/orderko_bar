@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference myRef, postRef;
     private List<String> order_list= new ArrayList<>();
+    private ArrayList<Order> orders = new ArrayList<>();
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     private DatabaseHelper myDb;
@@ -55,21 +56,44 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 order_list.clear();
+                orders.clear();
                 myDb.clearTable();
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
+
                 for(DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
                     Order order_recive = orderSnapshot.getValue(Order.class);
-                    String order = order_recive.getQuantity() + " x " + order_recive.getName() + " " + order_recive.getBulk();
-                    Log.d("databasetest", order_recive.getId() +"----> " + order);
 
+
+                    orders.add(order_recive);
                     myDb.insertData(order_recive.getName(),order_recive.getCategory(),order_recive.getBulk(),order_recive.getQuantity(),order_recive.getTable(),
                                     order_recive.getId());
-                    order_list.add(order);
+
                 }
 
+                ArrayList<String> unique_orders = new ArrayList<>();
+                for(Order o : orders) {
+                    if(!unique_orders.contains(o.getName())) {
+                        unique_orders.add(o.getName());
+                    }
+                }
+
+                for(String order_name : unique_orders) {
+                    Cursor res = myDb.getDrinksOfName(order_name);
+                    int quantity = 0;
+                    while (res.moveToNext()){
+                        quantity =quantity + Integer.parseInt(res.getString(4));
+
+                        }
+                    //Log.d("unique","Za pice: " + order_name + "imamo narudzbina " + quantity);
+                    String order = quantity + " x " + order_name;
+                    order_list.add(order);
+
+                }
+
+
                 StringBuffer buffer = new StringBuffer();
-                Cursor res = myDb.getAllData();
+                /*Cursor res = myDb.getAllData();
                 while (res.moveToNext()) {
                     buffer.append("ID :" + res.getString(0) + "\n");
                     buffer.append("Drink_id :" + res.getString(6) + "\n");
@@ -79,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                     buffer.append("Quantity :" + res.getString(4) + "\n");
                     buffer.append("Table :" + res.getString(5) + "\n\n");
                 }
-                Log.d("databasetest" , buffer.toString());
+                Log.d("databasetest" , buffer.toString());*/
 
                 listView.setAdapter(arrayAdapter);
             }
