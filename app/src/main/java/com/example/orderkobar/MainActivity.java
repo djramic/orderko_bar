@@ -24,27 +24,30 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseDatabase database;
     private DatabaseReference myRef, postRef;
-    private List<String> order_list= new ArrayList<>();
+    private ArrayList<String> order_list= new ArrayList<>();
     private ArrayList<Order> orders = new ArrayList<>();
+    private ArrayList<Card> card_list= new ArrayList<>();
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
     private DatabaseHelper myDb;
     private TextView bar_table_number_txtv;
     private CardView main_card_view;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = findViewById(R.id.list_view);
+        listView = findViewById(R.id.card_list);
         bar_table_number_txtv = findViewById(R.id.bar_table_number_txtv);
         main_card_view = findViewById(R.id.cardView);
 
 
+
+
         myDb = new DatabaseHelper(this);
         arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,order_list);
-        bar_table_number_txtv.setText("1");
 
 
 
@@ -57,29 +60,38 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 order_list.clear();
                 myDb.clearTable();
+                card_list.clear();
+                ArrayList<String> unique_table = new ArrayList<>();
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
-                for(DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
                     Order order_recive = orderSnapshot.getValue(Order.class);
 
-                    myDb.insertData(order_recive.getName(),order_recive.getCategory(),order_recive.getBulk(),order_recive.getQuantity(),order_recive.getTable(),
-                                    order_recive.getId());
+                    myDb.insertData(order_recive.getName(), order_recive.getCategory(), order_recive.getBulk(), order_recive.getQuantity(), order_recive.getTable(),
+                            order_recive.getId());
                     orders.add(order_recive);
                 }
 
-                ArrayList<String> unique_table = new ArrayList<>();
-                for(Order o : orders) {
-                    if(!unique_table.contains(o.getTable())) {
+                for (Order o : orders) {
+                    if (!unique_table.contains(o.getTable())) {
                         unique_table.add(o.getTable());
                     }
                 }
 
-                for(String ut : unique_table){
-                    List<String> order_for_table = new ArrayList<String>();
+                for (String ut : unique_table) {
+                    ArrayList<String> order_for_table = new ArrayList<>();
+                    order_for_table.clear();
                     order_for_table = orderForTable(ut);
-
+                    //Log.d("cardorders","narucion za sto " + ut + " " + order_for_table.toString());
+                    Card card = new Card(order_for_table, ut);
+                    //Log.d("cardorders" , c.getTable_number() + " narudzbina " + c.getList_items().toString());
+                    card_list.add(card);
                 }
+
+                CustomAdapter customAdapter = new CustomAdapter(card_list, getApplicationContext());
+                listView.setAdapter(customAdapter);
+
             }
 
             @Override
@@ -89,23 +101,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        main_card_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Cursor res = myDb.getAllData();
-                while (res.moveToNext()) {
-                    Log.d("databasetest", "Pokupio sam id: " + res.getString(6));
-                    postRef = FirebaseDatabase.getInstance().getReference().child("bello").child(res.getString(6));
-                    postRef.removeValue();
-                }
-            }
-        });
     }
 
-    private List<String>  orderForTable(String table ) {
+    private ArrayList<String>  orderForTable(String table ) {
 
         ArrayList<Order> table_orders = new ArrayList<>();
         order_list.clear();
