@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseHelper myDb;
     private TextView bar_table_number_txtv;
     private CardView main_card_view;
+    private ArrayList<String> unique_table = new ArrayList<>();
 
 
     @Override
@@ -43,12 +45,7 @@ public class MainActivity extends AppCompatActivity {
         bar_table_number_txtv = findViewById(R.id.bar_table_number_txtv);
         main_card_view = findViewById(R.id.cardView);
 
-
-
-
         myDb = new DatabaseHelper(this);
-        arrayAdapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,order_list);
-
 
 
         database = FirebaseDatabase.getInstance();
@@ -61,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
                 order_list.clear();
                 myDb.clearTable();
                 card_list.clear();
-                ArrayList<String> unique_table = new ArrayList<>();
+                unique_table.clear();
+                orders.clear();
+
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                         unique_table.add(o.getTable());
                     }
                 }
-
+                Log.d("listaa","stolovi: " + unique_table.toString());
                 for (String ut : unique_table) {
                     ArrayList<String> order_for_table = new ArrayList<>();
                     order_for_table.clear();
@@ -100,6 +99,18 @@ public class MainActivity extends AppCompatActivity {
                 Log.w("databasetest", "Failed to read value.", error.toException());
             }
         });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String table_number = card_list.get(position).getTable_number();
+                Cursor res = myDb.getDrinksOfTable(table_number);
+                while(res.moveToNext()) {
+                    postRef = FirebaseDatabase.getInstance().getReference().child("bello").child(res.getString(6));
+                    postRef.removeValue();
+                }
+            }
+        });
+
 
     }
 
