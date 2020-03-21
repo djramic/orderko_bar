@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for(String order_name : unique_orders) {
-            Cursor ord = myDb.getDrinksOfName(order_name);
+            Cursor ord = myDb.getDrinksOfName(order_name,table);
             int quantity = 0;
             while (ord.moveToNext()){
                 quantity =quantity + Integer.parseInt(ord.getString(4));

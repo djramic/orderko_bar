@@ -70,9 +70,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public Cursor getDrinksOfName(String name) {
+    public Cursor getDrinksOfName(String name, String table) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where DRINK = '" + name + "'", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where DRINK = '" + name + "' AND BAR_TABLE = '"+ table + "'", null);
         return res;
     }
 
