@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -45,10 +46,17 @@ public class CustomAdapter extends BaseAdapter {
         convertView = inflater.inflate(R.layout.card_view,parent,false);
 
         TextView table_number_txvw  = convertView.findViewById(R.id.bar_table_number_txtv);
-        ListView listView = convertView.findViewById(R.id.list_view);
+        LinearLayout listView = convertView.findViewById(R.id.list_view);
         Log.d("ajdavidim","punim listu sa" + card_order.get(position).getList_items());
-        ArrayAdapter<String> adapter = new ArrayAdapter(context,android.R.layout.simple_list_item_1,card_order.get(position).getList_items());
-        listView.setAdapter(adapter);
+        //ArrayAdapter<String> adapter = new ArrayAdapter(context,android.R.layout.simple_list_item_1,card_order.get(position).getList_items());
+        //listView.setAdapter(adapter);
+        for(int i = 0; i < card_order.get(position).getList_items().size();i++)
+        {
+            View vi = inflater.inflate(R.layout.drink_list_view,null);
+            TextView textView = vi.findViewById(R.id.textView);
+            textView.setText(card_order.get(position).getList_items().get(i));
+            listView.addView(vi);
+        }
         table_number_txvw.setText(table_number);
 
         return convertView;
