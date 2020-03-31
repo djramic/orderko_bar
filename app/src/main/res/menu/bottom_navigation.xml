@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_table"
+        android:id="@+id/bar"
         android:title="Lokal"
         android:icon="@drawable/ic_club_black_24dp" />
 
     <item
-        android:id="@+id/nav_drink_list"
+        android:id="@+id/orders"
         android:title="Narudžbine"
         android:icon="@drawable/ic_orders_black_24dp" />
 
     <item
-        android:id="@+id/nav_bill"
+        android:id="@+id/drink_list"
         android:title="Lista pića"
         android:icon="@drawable/ic_list_black_24dp" />
 

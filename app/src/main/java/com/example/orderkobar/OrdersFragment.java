@@ -1,64 +1,169 @@
 package com.example.orderkobar;
 
+import android.database.Cursor;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OrdersFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+
 public class OrdersFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public OrdersFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OrdersFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static OrdersFragment newInstance(String param1, String param2) {
-        OrdersFragment fragment = new OrdersFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    private FirebaseDatabase database;
+    private DatabaseReference myRef, postRef;
+    private ArrayList<String> order_list= new ArrayList<>();
+    private ArrayList<Order> orders = new ArrayList<>();
+    private ArrayList<Card> card_list= new ArrayList<>();
+    private ArrayAdapter<String> arrayAdapter;
+    private ListView listView;
+    private DatabaseHelper myDb;
+    private TextView bar_table_number_txtv;
+    private CardView main_card_view;
+    private ArrayList<String> unique_table = new ArrayList<>();
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_orders, container,false);
+
+        listView = v.findViewById(R.id.card_list);
+        bar_table_number_txtv = v.findViewById(R.id.bar_table_number_txtv);
+        main_card_view = v.findViewById(R.id.cardView);
+
+        myDb = new DatabaseHelper(getContext());
+
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("Bello/orders");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                order_list.clear();
+                myDb.clearTable();
+                card_list.clear();
+                unique_table.clear();
+                orders.clear();
+
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                for (DataSnapshot orderSnapshot : dataSnapshot.getChildren()) {
+                    Order order_recive = orderSnapshot.getValue(Order.class);
+
+                    myDb.insertData(order_recive.getName(), order_recive.getCategory(), order_recive.getBulk(), order_recive.getQuantity(), order_recive.getTable(),
+                            order_recive.getId());
+                    orders.add(order_recive);
+                }
+
+                for (Order o : orders) {
+                    if (!unique_table.contains(o.getTable())) {
+                        unique_table.add(o.getTable());
+                    }
+                }
+                Log.d("listaa","stolovi: " + unique_table.toString());
+                for (String ut : unique_table) {
+                    ArrayList<String> order_for_table = new ArrayList<>();
+                    order_for_table.clear();
+                    order_for_table = orderForTable(ut);
+                    //Log.d("cardorders","narucion za sto " + ut + " " + order_for_table.toString());
+                    Card card = new Card(order_for_table, ut);
+                    //Log.d("cardorders" , c.getTable_number() + " narudzbina " + c.getList_items().toString());
+                    card_list.add(card);
+                }
+
+                CustomAdapter customAdapter = new CustomAdapter(card_list, getContext());
+                listView.setAdapter(customAdapter);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("databasetest", "Failed to read value.", error.toException());
+            }
+        });
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String table_number = card_list.get(position).getTable_number();
+                Cursor res = myDb.getDrinksOfTable(table_number);
+                while(res.moveToNext()) {
+                    postRef = FirebaseDatabase.getInstance().getReference().child("Bello").child("orders").child(res.getString(6));
+                    postRef.removeValue();
+                }
+            }
+        });
+
+
+
+        return v;
+    }
+
+    private ArrayList<String>  orderForTable(String table ) {
+
+        ArrayList<Order> table_orders = new ArrayList<>();
+        order_list.clear();
+
+        Cursor res = myDb.getDrinksOfTable(table);
+        Log.d("tabletest","Usao sam ovde gledam sto " + table);
+        while(res.moveToNext()) {
+            Order order = new Order(res.getString(1),res.getString(4),res.getString(3),
+                    res.getString(5),res.getString(6),res.getString(2));
+            Log.d("tabletest","Ovo je poruzbina za sto 1 " + order.toString());
+            table_orders.add(order);
+
         }
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_orders, container, false);
+        ArrayList<String> unique_orders = new ArrayList<>();
+        for(Order o : table_orders) {
+            if(!unique_orders.contains(o.getName())) {
+                unique_orders.add(o.getName());
+            }
+        }
+
+        for(String order_name : unique_orders) {
+            Cursor ord = myDb.getDrinksOfName(order_name,table);
+            int quantity = 0;
+            while (ord.moveToNext()){
+                quantity =quantity + Integer.parseInt(ord.getString(4));
+
+            }
+            //Log.d("unique","Za pice: " + order_name + "imamo narudzbina " + quantity);
+            String order = quantity + " x " + order_name;
+            order_list.add(order);
+
+        }
+
+
+        StringBuffer buffer = new StringBuffer();
+                /*Cursor res = myDb.getAllData();
+                while (res.moveToNext()) {
+                    buffer.append("ID :" + res.getString(0) + "\n");
+                    buffer.append("Drink_id :" + res.getString(6) + "\n");
+                    buffer.append("Drink :" + res.getString(1) + "\n");
+                    buffer.append("Category :" + res.getString(2) + "\n");
+                    buffer.append("Bulk :" + res.getString(3) + "\n");
+                    buffer.append("Quantity :" + res.getString(4) + "\n");
+                    buffer.append("Table :" + res.getString(5) + "\n\n");
+                }
+                Log.d("databasetest" , buffer.toString());*/
+        return order_list;
+        //listView.setAdapter(arrayAdapter);
     }
 }
