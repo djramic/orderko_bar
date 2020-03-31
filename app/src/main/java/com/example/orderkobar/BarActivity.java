@@ -49,13 +49,13 @@ public class BarActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.bar:
-                       // selectedFragment =;
+                        selectedFragment = new BarFragment();
                         break;
                     case R.id.orders:
                         selectedFragment = new OrdersFragment();
                         break;
                     case R.id.drink_list:
-                       // selectedFragment = ;
+                        selectedFragment = new DrinkListFragment() ;
                         break;
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_contaner, selectedFragment)
