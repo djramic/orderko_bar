@@ -44,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "185003204042-9hrcvf0mkudbek666v9s8taorq0j1pdl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.orderkobar",
+            "certificate_hash": "c068d99984900f6c99371b17829b21d8d488f363"
+          }
+        },
+        {
           "client_id": "185003204042-u7tvkuaghlf5nqtfvbtln7bt9egdf7ak.apps.googleusercontent.com",
           "client_type": 3
         }
