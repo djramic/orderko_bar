@@ -23,6 +23,7 @@ public class AddDrinkDialog extends Dialog {
     private Button cancel_but;
     private DrinkListFragment fragment;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private BasicInfo basicInfo;
     public AddDrinkDialog(@NonNull Context context, DrinkListFragment df) {
         super(context);
         fragment = df;
@@ -36,6 +37,8 @@ public class AddDrinkDialog extends Dialog {
 
         add_drink_but = findViewById(R.id.club_d_add_but);
         cancel_but = findViewById(R.id.club_d_cancel_but);
+
+        basicInfo = BasicInfo.getInstance();
 
 
         add_drink_but.setOnClickListener(new View.OnClickListener() {
@@ -73,9 +76,9 @@ public class AddDrinkDialog extends Dialog {
     }
 
     private void addDrink(Map<String, Object> drink) {
-        String id =  db.collection("Clubs/" +"KCgn0T1nduIgNYIjwTNq" + "/Drink").document().getId();
+        String id =  db.collection("Clubs/" + basicInfo.getClubId() + "/Drink").document().getId();
         drink.put("ID",id);
-        db.collection("Clubs/" +"KCgn0T1nduIgNYIjwTNq" + "/Drink")
+        db.collection("Clubs/" + basicInfo.getClubId() + "/Drink")
                 .document(id).set(drink)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

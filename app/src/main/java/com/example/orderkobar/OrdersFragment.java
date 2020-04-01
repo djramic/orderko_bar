@@ -36,6 +36,7 @@ public class OrdersFragment extends Fragment {
     private TextView bar_table_number_txtv;
     private CardView main_card_view;
     private ArrayList<String> unique_table = new ArrayList<>();
+    private BasicInfo basicInfo;
     @Nullable
     @Override
 
@@ -45,11 +46,12 @@ public class OrdersFragment extends Fragment {
         listView = v.findViewById(R.id.card_list);
         bar_table_number_txtv = v.findViewById(R.id.bar_table_number_txtv);
         main_card_view = v.findViewById(R.id.cardView);
+        basicInfo = BasicInfo.getInstance();
 
         myDb = new DatabaseHelper(getContext());
 
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("Bello/orders");
+        myRef = database.getReference(basicInfo.getClub() + "/orders");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -104,7 +106,7 @@ public class OrdersFragment extends Fragment {
                 String table_number = card_list.get(position).getTable_number();
                 Cursor res = myDb.getDrinksOfTable(table_number);
                 while(res.moveToNext()) {
-                    postRef = FirebaseDatabase.getInstance().getReference().child("Bello").child("orders").child(res.getString(6));
+                    postRef = FirebaseDatabase.getInstance().getReference().child(basicInfo.getClub()).child("orders").child(res.getString(6));
                     postRef.removeValue();
                 }
             }

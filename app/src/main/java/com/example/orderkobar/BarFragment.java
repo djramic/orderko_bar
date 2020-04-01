@@ -29,6 +29,7 @@ public class BarFragment extends Fragment {
     private BasicInfo basicInfo;
     private ClubListAdapter adapter;
     private ArrayList<String> clubs = new ArrayList<>();
+    private ArrayList<String> clubs_ids = new ArrayList<>();
     private ListView club_list;
 
 
@@ -61,6 +62,7 @@ public class BarFragment extends Fragment {
                 view.setSelected(true);
                 basicInfo.setClubListPosition(position);
                 basicInfo.setClub(clubs.get(position));
+                basicInfo.setClubId(clubs_ids.get(position));
                 updateUI();
             }
         });
@@ -77,6 +79,7 @@ public class BarFragment extends Fragment {
 
     private void getClubs() {
         clubs.clear();
+        clubs_ids.clear();
         db.collection("Users/" + basicInfo.getUserId() + "/Clubs")
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -85,7 +88,9 @@ public class BarFragment extends Fragment {
                     for(QueryDocumentSnapshot document : task.getResult())
                     {
                         String name = document.get("Name").toString();
+                        String id = document.get("ID").toString();
                         clubs.add(name);
+                        clubs_ids.add(id);
                     }
                     createList();
 

@@ -32,6 +32,7 @@ public class DrinkListFragment extends Fragment {
     private ArrayList<Drink> drinks;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Button add_drink_button;
+    private BasicInfo basicInfo;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -39,7 +40,10 @@ public class DrinkListFragment extends Fragment {
 
         expandingList = v.findViewById(R.id.expanding_list_main);
         add_drink_button = v.findViewById(R.id.list_f_add_drink_but);
+        basicInfo = BasicInfo.getInstance();
+
         getDrinks();
+
 
         add_drink_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,22 +123,24 @@ public class DrinkListFragment extends Fragment {
     }
 
     private void removeDrink(String id) {
-        db.collection("Clubs/" +"KCgn0T1nduIgNYIjwTNq" + "/Drink")
-                .document(id)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(getContext(),"Pice je uspesno uklonjeno",Toast.LENGTH_LONG).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(),"GRESKA, pokusajte ponovo",Toast.LENGTH_LONG).show();
-                    }
-                });
-        getDrinks();
+        if(basicInfo.getClubId() != null) {
+            db.collection("Clubs/" + basicInfo.getClubId() + "/Drink")
+                    .document(id)
+                    .delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getContext(), "Pice je uspesno uklonjeno", Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "GRESKA, pokusajte ponovo", Toast.LENGTH_LONG).show();
+                        }
+                    });
+            getDrinks();
+        }
 
     }
 
@@ -148,34 +154,36 @@ public class DrinkListFragment extends Fragment {
     return  drks;
     }
 
-    public void getDrinks(){
+    public void getDrinks() {
         drinks = new ArrayList<>();
-        db.collection("Clubs/" +"KCgn0T1nduIgNYIjwTNq" + "/Drink")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("test", document.getId() + " => " + document.getData());
-                                String name = document.getData().get("Name").toString();
-                                String category = document.getData().get("Category").toString();
-                                String bulk = document.getData().get("Bulk").toString();
-                                String price = document.getData().get("Price").toString();
-                                String id = document.getData().get("ID").toString();
-                                Log.w("firestoretest", "Naziv pica: " + name + ", Kategorija pica: " + category + ", Kolicina pica: " + bulk);
-                                Drink drink = new Drink(id,name,category,bulk,"0", price);
-                                drinks.add(drink);
+        if (basicInfo.getClubId() != null) {
+            db.collection("Clubs/" + basicInfo.getClubId() + "/Drink")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d("test", document.getId() + " => " + document.getData());
+                                    String name = document.getData().get("Name").toString();
+                                    String category = document.getData().get("Category").toString();
+                                    String bulk = document.getData().get("Bulk").toString();
+                                    String price = document.getData().get("Price").toString();
+                                    String id = document.getData().get("ID").toString();
+                                    Log.w("firestoretest", "Naziv pica: " + name + ", Kategorija pica: " + category + ", Kolicina pica: " + bulk);
+                                    Drink drink = new Drink(id, name, category, bulk, "0", price);
+                                    drinks.add(drink);
 
+                                }
+                                createDrinkList();
+
+                            } else {
+                                Log.w("firestoretest", "Error getting documents.", task.getException());
                             }
-                            createDrinkList();
-
-                        } else {
-                            Log.w("firestoretest", "Error getting documents.", task.getException());
                         }
-                    }
-                });
+                    });
 
+        }
     }
 
 

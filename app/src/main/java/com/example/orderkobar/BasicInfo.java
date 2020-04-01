@@ -4,6 +4,7 @@ public class BasicInfo {
     private String userEmail;
     private String userId;
     private String Club;
+    private String ClubId;
     private static BasicInfo basicInfo;
     private int ClubListPosition = -1;
 
@@ -11,6 +12,14 @@ public class BasicInfo {
         if(basicInfo == null)
             basicInfo = new BasicInfo();
         return basicInfo;
+    }
+
+    public String getClubId() {
+        return ClubId;
+    }
+
+    public void setClubId(String clubId) {
+        ClubId = clubId;
     }
 
     public int getClubListPosition() {
