@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -31,6 +32,9 @@ public class BarActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private FirebaseAuth mAuth;
     private TextView acct_txtv;
+    private Button sing_out_button;
+    private TextView club_name;
+    private BasicInfo basicInfo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +42,11 @@ public class BarActivity extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         acct_txtv = findViewById(R.id.bar_accaont_txtv);
+        sing_out_button = findViewById(R.id.bar_a_sing_out);
+        club_name = findViewById(R.id.bar_name_txtv);
 
         mAuth = FirebaseAuth.getInstance();
+        basicInfo = BasicInfo.getInstance();
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -66,6 +73,17 @@ public class BarActivity extends AppCompatActivity {
         });
 
 
+        sing_out_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mAuth.signOut();
+                    updateUI(mAuth.getCurrentUser());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -74,6 +92,10 @@ public class BarActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
+
+        BasicInfo basicInfo = BasicInfo.getInstance();
+        basicInfo.setUserId(currentUser.getUid());
+        basicInfo.setUserEmail(currentUser.getEmail());
     }
 
     public void updateUI(FirebaseUser currentUser) {
@@ -85,5 +107,7 @@ public class BarActivity extends AppCompatActivity {
     }
 
 
-
+    public void updateUbarInfo() {
+        club_name.setText(basicInfo.getClub());
+    }
 }

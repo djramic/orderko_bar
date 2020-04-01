@@ -6,7 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +18,8 @@ import androidx.fragment.app.Fragment;
 import com.diegodobelo.expandingview.ExpandingItem;
 import com.diegodobelo.expandingview.ExpandingList;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -26,16 +31,23 @@ public class DrinkListFragment extends Fragment {
     private ExpandingList expandingList;
     private ArrayList<Drink> drinks;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private Button add_drink_button;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v  = inflater.inflate(R.layout.fragment_drink_list,container,false);
 
         expandingList = v.findViewById(R.id.expanding_list_main);
+        add_drink_button = v.findViewById(R.id.list_f_add_drink_but);
         getDrinks();
 
-
-
+        add_drink_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddDrinkDialog cdd = new AddDrinkDialog(getContext(), DrinkListFragment.this);
+                cdd.show();
+            }
+        });
 
         return v;
     }
@@ -52,7 +64,7 @@ public class DrinkListFragment extends Fragment {
             }
         }
         //Log.d("listtest",categorys.toString());
-
+        expandingList.removeAllViews();
         for (String ctg : categorys) {
 
             ArrayList<Drink> cat_drinks = new ArrayList<>(getDrinksOfCat(ctg));
@@ -62,7 +74,7 @@ public class DrinkListFragment extends Fragment {
             ((TextView) item.findViewById(R.id.title)).setText(ctg);
 
 
-            /*if(ctg.equals("Pivo")) {
+           /* if(ctg.equals("Pivo")) {
                 Log.d("colortest","usao sam ovde");
                 item.setIndicatorColorRes(R.color.yellow);
                 item.setIndicatorIconRes(R.drawable.beer_drink);
@@ -87,15 +99,43 @@ public class DrinkListFragment extends Fragment {
             }*/
 
             int i = 0;
-            for (Drink d : cat_drinks) {
+            for (final Drink d : cat_drinks) {
                 View v = item.getSubItemView(i);
                 ((TextView) v.findViewById(R.id.sub_title)).setText(d.getName());
                 ((TextView) v.findViewById(R.id.sub_bulk)).setText(d.getBulk() + "l");
                 ((TextView) v.findViewById(R.id.sub_price_txtv)).setText(d.getPrice() + "din");
+
+                ((ImageButton) v.findViewById(R.id.sub_remove_but)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeDrink(d.getId());
+                    }
+                });
+
                 i++;
             }
 
         }
+    }
+
+    private void removeDrink(String id) {
+        db.collection("Clubs/" +"KCgn0T1nduIgNYIjwTNq" + "/Drink")
+                .document(id)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getContext(),"Pice je uspesno uklonjeno",Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(),"GRESKA, pokusajte ponovo",Toast.LENGTH_LONG).show();
+                    }
+                });
+        getDrinks();
+
     }
 
     private ArrayList<Drink> getDrinksOfCat(String cat) {
@@ -107,9 +147,10 @@ public class DrinkListFragment extends Fragment {
         }
     return  drks;
     }
-    private void getDrinks(){
+
+    public void getDrinks(){
         drinks = new ArrayList<>();
-        db.collection("Clubs/" +"n7mBcl22oreb5ocMDAqe" + "/Drink")
+        db.collection("Clubs/" +"KCgn0T1nduIgNYIjwTNq" + "/Drink")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -121,8 +162,9 @@ public class DrinkListFragment extends Fragment {
                                 String category = document.getData().get("Category").toString();
                                 String bulk = document.getData().get("Bulk").toString();
                                 String price = document.getData().get("Price").toString();
+                                String id = document.getData().get("ID").toString();
                                 Log.w("firestoretest", "Naziv pica: " + name + ", Kategorija pica: " + category + ", Kolicina pica: " + bulk);
-                                Drink drink = new Drink("0",name,category,bulk,"0", price);
+                                Drink drink = new Drink(id,name,category,bulk,"0", price);
                                 drinks.add(drink);
 
                             }
@@ -135,5 +177,6 @@ public class DrinkListFragment extends Fragment {
                 });
 
     }
+
 
 }
