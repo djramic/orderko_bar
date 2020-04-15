@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@color/colorBackground">
 
     <EditText
         android:id="@+id/email_edtx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:ems="10"
         android:hint="e-mail"
         android:inputType="textEmailAddress"
@@ -26,6 +29,8 @@
         android:ems="10"
         android:hint="password"
         android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email_edtx" />
@@ -36,6 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Uloguj se"
+        android:textColor="@color/pink"
+        android:background="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/password_edtx" />
@@ -47,6 +54,7 @@
         android:layout_marginTop="10dp"
         android:text="ili"
         app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_but" />
 
@@ -56,6 +64,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Napravi nalog"
+        android:textColor="@color/pink"
+        android:background="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />

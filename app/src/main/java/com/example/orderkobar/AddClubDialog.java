@@ -24,8 +24,10 @@ public class AddClubDialog extends Dialog {
     private EditText club_name;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private BasicInfo basicInfo;
-    public AddClubDialog(@NonNull Context context) {
+    private BarFragment bar;
+    public AddClubDialog(@NonNull Context context,BarFragment bar) {
         super(context);
+        this.bar = bar;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_add_club);
 
@@ -82,7 +84,9 @@ public class AddClubDialog extends Dialog {
                         Log.d("createclubtest","Lokal nije dodat u clubs");
                     }
                 });
+        bar.getClubs();
         dismiss();
+
     }
 
 

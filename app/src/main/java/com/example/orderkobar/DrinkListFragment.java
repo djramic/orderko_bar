@@ -48,8 +48,13 @@ public class DrinkListFragment extends Fragment {
         add_drink_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddDrinkDialog cdd = new AddDrinkDialog(getContext(), DrinkListFragment.this);
-                cdd.show();
+                if(basicInfo.getClub() != null) {
+                    AddDrinkDialog cdd = new AddDrinkDialog(getContext(), DrinkListFragment.this);
+                    cdd.show();
+                }else {
+                    Toast.makeText(getContext(),"Morati prvo izabrati lokal",Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
@@ -78,7 +83,7 @@ public class DrinkListFragment extends Fragment {
             ((TextView) item.findViewById(R.id.title)).setText(ctg);
 
 
-           /* if(ctg.equals("Pivo")) {
+            if(ctg.equals("Pivo")) {
                 Log.d("colortest","usao sam ovde");
                 item.setIndicatorColorRes(R.color.yellow);
                 item.setIndicatorIconRes(R.drawable.beer_drink);
@@ -100,7 +105,7 @@ public class DrinkListFragment extends Fragment {
                 Log.d("colortest","usao sam ovde");
                 item.setIndicatorColorRes(R.color.orange);
                 item.setIndicatorIconRes(R.drawable.soda_dink);
-            }*/
+            }
 
             int i = 0;
             for (final Drink d : cat_drinks) {

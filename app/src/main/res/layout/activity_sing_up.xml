@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
     <EditText
         android:id="@+id/sing_up_name_edtx"
@@ -13,6 +14,8 @@
         android:layout_marginTop="50dp"
         android:ems="10"
         android:hint="name"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,6 +28,8 @@
         android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="e-mail"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +42,8 @@
         android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="password"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +55,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="Napravi nalog"
+        android:background="@android:color/transparent"
+        android:textColor="@color/pink"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sing_up_password" />

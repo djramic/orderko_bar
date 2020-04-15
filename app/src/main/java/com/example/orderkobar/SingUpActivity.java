@@ -58,12 +58,12 @@ public class SingUpActivity extends AppCompatActivity {
                                     Log.d("singUp test", "createUserWithEmail:success");
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     createUserDatabase(user);
-                                    //updateUI(user);
+                                    updateUI(user);
                                 } else {
                                     Log.w("singUp test", "createUserWithEmail:failure", task.getException());
-                                    Toast.makeText(SingUpActivity.this, "Authentication failed.",
+                                    Toast.makeText(SingUpActivity.this, "Greska, pokusajte ponovo",
                                             Toast.LENGTH_SHORT).show();
-                                    //updateUI(null);
+                                    updateUI(null);
                                 }
                             }
                         });

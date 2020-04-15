@@ -22,7 +22,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
         android:id="@+id/add_d_category"
@@ -89,7 +89,7 @@
         android:layout_marginLeft="95dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="50dp"
-        android:text="Odustani"
+        android:text="Završi"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/club_d_name_edtx"
         app:layout_constraintStart_toStartOf="@+id/club_d_name_edtx"

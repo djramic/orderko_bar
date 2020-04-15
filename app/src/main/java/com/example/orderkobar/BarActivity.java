@@ -49,6 +49,8 @@ public class BarActivity extends AppCompatActivity {
         basicInfo = BasicInfo.getInstance();
 
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_contaner, new BarFragment())
+                .commit();
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

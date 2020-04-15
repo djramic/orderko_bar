@@ -50,7 +50,7 @@ public class BarFragment extends Fragment {
         add_club.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddClubDialog addClubDialog = new AddClubDialog(getContext());
+                AddClubDialog addClubDialog = new AddClubDialog(getContext(),BarFragment.this );
                 addClubDialog.show();
             }
 
@@ -77,7 +77,7 @@ public class BarFragment extends Fragment {
 
     }
 
-    private void getClubs() {
+    public void getClubs() {
         clubs.clear();
         clubs_ids.clear();
         db.collection("Users/" + basicInfo.getUserId() + "/Clubs")

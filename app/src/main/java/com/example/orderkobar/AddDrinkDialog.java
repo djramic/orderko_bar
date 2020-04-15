@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -24,6 +25,12 @@ public class AddDrinkDialog extends Dialog {
     private DrinkListFragment fragment;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private BasicInfo basicInfo;
+    private EditText drink_name;
+    private EditText category;
+    private EditText bulk;
+    private EditText price;
+
+
     public AddDrinkDialog(@NonNull Context context, DrinkListFragment df) {
         super(context);
         fragment = df;
@@ -37,6 +44,10 @@ public class AddDrinkDialog extends Dialog {
 
         add_drink_but = findViewById(R.id.club_d_add_but);
         cancel_but = findViewById(R.id.club_d_cancel_but);
+        drink_name = findViewById(R.id.add_d_drink);
+        category = findViewById(R.id.add_d_category);
+        bulk = findViewById(R.id.add_d_bulk);
+        price = findViewById(R.id.club_d_name_edtx);
 
         basicInfo = BasicInfo.getInstance();
 
@@ -44,10 +55,7 @@ public class AddDrinkDialog extends Dialog {
         add_drink_but.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText drink_name = findViewById(R.id.add_d_drink);
-                EditText category = findViewById(R.id.add_d_category);
-                EditText bulk = findViewById(R.id.add_d_bulk);
-                EditText price = findViewById(R.id.club_d_name_edtx);
+
 
                 Map<String, Object> drink = new HashMap<>();
                 
@@ -58,7 +66,32 @@ public class AddDrinkDialog extends Dialog {
                 
                 addDrink(drink);
 
-
+            }
+        });
+        drink_name.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("adddrinktest", "Klikno si drink name");
+                drink_name.setText("");
+                return true;
+            }
+        });
+        bulk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bulk.setText("");
+            }
+        });
+        category.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                category.setText("");
+            }
+        });
+        price.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                price.setText("");
 
             }
         });
@@ -73,6 +106,8 @@ public class AddDrinkDialog extends Dialog {
         });
 
 
+
+
     }
 
     private void addDrink(Map<String, Object> drink) {
@@ -84,6 +119,7 @@ public class AddDrinkDialog extends Dialog {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("adddrinktest", "DocumentSnapshot successfully written!");
+                        Toast.makeText(getContext(),"Piće je uspešno dodato",Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
